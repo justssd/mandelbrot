@@ -1,3 +1,5 @@
+#include <stdexcept>
+
 namespace ra::cexpr {
 
 // A basic string class template for use in constexpr contexts.
@@ -5,185 +7,212 @@ template <class T, std::size_t M>
 class cexpr_basic_string {
 public:
 
-  // An unsigned integral type used to represent sizes.
-  using size_type = std::size_t;
+    // An unsigned integral type used to represent sizes.
+    using size_type = std::size_t;
 
-  // The type of each character in the string (i.e., an alias for
-  // the template parameter T).
-  using value_type = T;
+    // The type of each character in the string (i.e., an alias for
+    // the template parameter T).
+    using value_type = T;
 
-  // The type of a mutating pointer to each character in the string.
-  using pointer = T*;
+    // The type of a mutating pointer to each character in the string.
+    using pointer = T*;
 
-  // The type of a non-mutating pointer to each character in the
-  // string.
-  using const_pointer = const T*;
+    // The type of a non-mutating pointer to each character in the
+    // string.
+    using const_pointer = const T*;
 
-  // The type of a mutating reference to a character in the string.
-  using reference = T&;
+    // The type of a mutating reference to a character in the string.
+    using reference = T&;
 
-  // The type of a non-mutating reference to a character in the
-  // string.
-  using const_reference = const T&;
+    // The type of a non-mutating reference to a character in the
+    // string.
+    using const_reference = const T&;
 
-  // A mutating iterator type for the elements in the string.
-  using iterator = pointer;
+    // A mutating iterator type for the elements in the string.
+    using iterator = pointer;
 
-  // A non-mutating iterator type for the elements in the string.
-  using const_iterator = const_pointer;
+    // A non-mutating iterator type for the elements in the string.
+    using const_iterator = const_pointer;
 
-  // Default construct a string.
-  // Creates an empty string (i.e., a string containing no
-  // characters).
-  //
-  // Time complexity:
-  // Linear in M.
-  constexpr cexpr_basic_string();
+    // Default construct a string.
+    // Creates an empty string (i.e., a string containing no
+    // characters).
+    //
+    // Time complexity:
+    // Linear in M.
+    constexpr cexpr_basic_string()
+            :   m_size_(0),
+                m_str_(0) {}
 
-  // Copy construct a string.
-  //
-  // Time complexity:
-  // Linear in M.
-  constexpr cexpr_basic_string(const cexpr_basic_string&) = default;
+    // Copy construct a string.
+    //
+    // Time complexity:
+    // Linear in M.
+    constexpr cexpr_basic_string(const cexpr_basic_string&) = default;
 
-  // Copy assign a string.
-  //
-  // Time complexity:
-  // Linear in M.
-  constexpr cexpr_basic_string& operator=(const cexpr_basic_string&) = default;
+    // Copy assign a string.
+    //
+    // Time complexity:
+    // Linear in M.
+    constexpr cexpr_basic_string& operator=(const cexpr_basic_string&) = default;
 
-  // Destroy a string.
-  //
-  // Time complexity:
-  // Constant.
-  ~cexpr_basic_string() = default;
+    // Destroy a string.
+    //
+    // Time complexity:
+    // Constant.
+    ~cexpr_basic_string() = default;
 
-  // Creates a string with the contents given by the
-  // null-terminated character array pointed to by s.
-  // If the string does not have sufficient capacity to hold
-  // the character data provided, an exception of type
-  // std::runtime_error is thrown.
-  //
-  // Time complexity:
-  // Linear in the length of the string s.
-  constexpr cexpr_basic_string(const value_type* s);
+    // Creates a string with the contents given by the
+    // null-terminated character array pointed to by s.
+    // If the string does not have sufficient capacity to hold
+    // the character data provided, an exception of type
+    // std::runtime_error is thrown.
+    //
+    // Time complexity:
+    // Linear in the length of the string s.
+    constexpr cexpr_basic_string(const value_type* s)
+            :   m_size_(0),
+                m_str_(0) {
+        pointer curr(m_str_);
+        while (*s != value_type(0)) {
+            if (m_size_ == M) {
+                throw std::runtime_error("insufficient capacity to hold the character data provided");
+            }
+            *curr++ = *s++;
+            ++m_size_;
+        }
+    }
 
-  // Creates a string with the contents specified by the characters
-  // in the iterator range [first, last).
-  // If the string does not have sufficient capacity to hold
-  // the character data provided, an exception of type
-  // std::runtime_error is thrown.
-  //
-  // Time complexity:
-  // Linear in the size of the range [first, last).
-  constexpr cexpr_basic_string(const_iterator first, const_iterator last);
+    // Creates a string with the contents specified by the characters
+    // in the iterator range [first, last).
+    // If the string does not have sufficient capacity to hold
+    // the character data provided, an exception of type
+    // std::runtime_error is thrown.
+    //
+    // Time complexity:
+    // Linear in the size of the range [first, last).
+    constexpr cexpr_basic_string(const_iterator first, const_iterator last)
+            :   m_size_(0),
+                m_str_(0) {
+        pointer curr(m_str_);
+        while(first != last) {
+            if (m_size_ == M) {
+                throw std::runtime_error("insufficient capacity to hold the character data provided");
+            }
+            *curr++ = *first++;
+            ++m_size_;
+        }
+    }
 
-  // Returns the maximum number of characters that can be held by a
-  // string of this type.
-  // The value returned is the template parameter M.
-  //
-  // Time complexity:
-  // Constant.
-  static constexpr size_type max_size();
+    // Returns the maximum number of characters that can be held by a
+    // string of this type.
+    // The value returned is the template parameter M.
+    //
+    // Time complexity:
+    // Constant.
+    static constexpr size_type max_size();
 
-  // Returns the maximum number of characters that the string can
-  // hold. The value returned is always the template parameter M.
-  //
-  // Time complexity:
-  // Constant.
-  constexpr size_type capacity() const;
+    // Returns the maximum number of characters that the string can
+    // hold. The value returned is always the template parameter M.
+    //
+    // Time complexity:
+    // Constant.
+    constexpr size_type capacity() const;
 
-  // Returns the number of characters in the string (excluding the
-  // dummy null character).
-  //
-  // Time complexity:
-  // Constant.
-  constexpr size_type size() const;
+    // Returns the number of characters in the string (excluding the
+    // dummy null character).
+    //
+    // Time complexity:
+    // Constant.
+    constexpr size_type size() const;
 
-  // Returns a pointer to the first character in the string.
-  // The pointer that is returned is guaranteed to point to a
-  // null-terminated character array.
-  // The user of this class shall not alter the dummy null
-  // character stored at data() + size().
-  //
-  // Time complexity:
-  // Constant.
-  value_type* data();
-  const value_type* data() const;
+    // Returns a pointer to the first character in the string.
+    // The pointer that is returned is guaranteed to point to a
+    // null-terminated character array.
+    // The user of this class shall not alter the dummy null
+    // character stored at data() + size().
+    //
+    // Time complexity:
+    // Constant.
+    value_type* data();
+    const value_type* data() const;
 
-  // Returns an iterator referring to the first character in the
-  // string.
-  //
-  // Time complexity:
-  // Constant.
-  constexpr iterator begin();
-  constexpr const_iterator begin() const;
+    // Returns an iterator referring to the first character in the
+    // string.
+    //
+    // Time complexity:
+    // Constant.
+    constexpr iterator begin();
+    constexpr const_iterator begin() const;
 
-  // Returns an iterator referring to the fictitious
-  // one-past-the-end character in the string.
-  //
-  // Time complexity:
-  // Constant.
-  constexpr iterator end();
-  constexpr const_iterator end() const;
+    // Returns an iterator referring to the fictitious
+    // one-past-the-end character in the string.
+    //
+    // Time complexity:
+    // Constant.
+    constexpr iterator end();
+    constexpr const_iterator end() const;
 
-  // Returns a reference to the i-th character in the string if i
-  // is less than the string size; and returns a reference to the
-  // dummy null character if i equals the string size.
-  // Precondition: The index i is such that i >= 0 and i <= size().
-  //
-  // Time complexity:
-  // Constant.
-  constexpr reference operator[](size_type i);
-  constexpr const_reference operator[](size_type i) const;
+    // Returns a reference to the i-th character in the string if i
+    // is less than the string size; and returns a reference to the
+    // dummy null character if i equals the string size.
+    // Precondition: The index i is such that i >= 0 and i <= size().
+    //
+    // Time complexity:
+    // Constant.
+    constexpr reference operator[](size_type i);
+    constexpr const_reference operator[](size_type i) const;
 
-  // Appends (i.e., adds to the end) a single character to the
-  // string. If the size of the string is equal to the capacity,
-  // the string is not modified and an exception of type
-  // std::runtime_error is thrown.
-  //
-  // Time complexity:
-  // Constant.
-  constexpr void push_back(const T& x);
+    // Appends (i.e., adds to the end) a single character to the
+    // string. If the size of the string is equal to the capacity,
+    // the string is not modified and an exception of type
+    // std::runtime_error is thrown.
+    //
+    // Time complexity:
+    // Constant.
+    constexpr void push_back(const T& x);
 
-  // Erases the last character in the string.
-  // If the string is empty, an exception of type std::runtime_error
-  // is thrown.
-  //
-  // Time complexity:
-  // Constant.
-  constexpr void pop_back();
+    // Erases the last character in the string.
+    // If the string is empty, an exception of type std::runtime_error
+    // is thrown.
+    //
+    // Time complexity:
+    // Constant.
+    constexpr void pop_back();
 
-  // Appends (i.e., adds to the end) to the string the
-  // null-terminated string pointed to by s.
-  // Precondition: The pointer s must be non-null.
-  // If the string has insufficient capacity to hold the new value
-  // resulting from the append operation, the string is not modified
-  // and an exception of type std::runtime_error is thrown.
-  //
-  // Time complexity:
-  // Linear in the length of the string s.
-  constexpr cexpr_basic_string& append(const value_type* s);
+    // Appends (i.e., adds to the end) to the string the
+    // null-terminated string pointed to by s.
+    // Precondition: The pointer s must be non-null.
+    // If the string has insufficient capacity to hold the new value
+    // resulting from the append operation, the string is not modified
+    // and an exception of type std::runtime_error is thrown.
+    //
+    // Time complexity:
+    // Linear in the length of the string s.
+    constexpr cexpr_basic_string& append(const value_type* s);
 
-  // Appends (i.e., adds to the end) to the string another
-  // cexpr_basic_string with the same character type (but
-  // possibly a different maximum size).
-  // If the string has insufficient capacity to hold the new value
-  // resulting from the append operation, the string is not modified
-  // and an exception of type std::runtime_error is thrown.
-  //
-  // Time complexity:
-  // Linear in other.size().
-  template <size_type OtherM>
-  constexpr cexpr_basic_string& append(const cexpr_basic_string<value_type, OtherM>& other);
+    // Appends (i.e., adds to the end) to the string another
+    // cexpr_basic_string with the same character type (but
+    // possibly a different maximum size).
+    // If the string has insufficient capacity to hold the new value
+    // resulting from the append operation, the string is not modified
+    // and an exception of type std::runtime_error is thrown.
+    //
+    // Time complexity:
+    // Linear in other.size().
+    template <size_type OtherM>
+    constexpr cexpr_basic_string& append(const cexpr_basic_string<value_type, OtherM>& other);
 
-  // Erases all of the characters in the string, yielding an empty
-  // string.
-  //
-  // Time complexity:
-  // Constant.
-  constexpr void clear();
+    // Erases all of the characters in the string, yielding an empty
+    // string.
+    //
+    // Time complexity:
+    // Constant.
+    constexpr void clear();
 
+private:
+    size_type m_size_;
+    value_type m_str_[M + 1];
 };
 
 template <std::size_t M>

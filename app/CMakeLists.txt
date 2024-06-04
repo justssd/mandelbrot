@@ -12,3 +12,4 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=undefined -fsanitize=address 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=undefined -fsanitize=address -Wall")
 
 add_executable(test_cexpr_basic_string test_cexpr_basic_string.cpp)
+target_link_libraries(test_cexpr_basic_string Catch2::Catch2WithMain)
