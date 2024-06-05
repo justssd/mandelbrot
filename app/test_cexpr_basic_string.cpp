@@ -1,34 +1,62 @@
 #include <catch2/catch_all.hpp>
+#include <catch2/catch_template_test_macros.hpp>
 #include "ra/cexpr_basic_string.hpp"
 
 using ra::cexpr::cexpr_basic_string;
 using ra::cexpr::cexpr_string;
 
-TEST_CASE("default constructor", "[cexpr_basic_string][constructor]") {
-    constexpr cexpr_string<10> s;
-    constexpr cexpr_basic_string<unsigned char, 0> ucs;
-    constexpr cexpr_basic_string<wchar_t, 100> wcs;
+TEMPLATE_TEST_CASE_SIG("default constructor", "",
+        ((typename T, std::size_t M), T, M),
+        (char, 3), (unsigned char, 0), (wchar_t, 9)) {
+
+    constexpr cexpr_basic_string<T, M> s;
 }
 
-TEST_CASE("constructor with null-terminated character array", "[cexpr_basic_string][constructor]") {
-    constexpr cexpr_string<8> s("12345678");
-    constexpr unsigned char temp[] = "123456";
-    // throws std::runtime_error
-    // constexpr cexpr_basic_string<unsigned char, 5> ucs(temp);
-    constexpr cexpr_basic_string<wchar_t, 0> wcs(L"");
+TEMPLATE_TEST_CASE_SIG("c-string constructor (empty c-string)", "",
+        ((typename T, std::size_t M), T, M),
+        (char, 0), (unsigned char, 1), (wchar_t, 0)) {
+
+    constexpr T empty[] = {'\0'};
+    constexpr cexpr_basic_string<T, M> es(empty);
 }
 
-TEST_CASE("constructor with iterator range [first, last)", "[cexpr_basic_string][constructor]") {
-    constexpr char c[] = "123456789"; 
-    constexpr unsigned char uc[] = "";
-    constexpr wchar_t wc[] = L"123";
-    
-    constexpr cexpr_string<0> cs1(c, c);
-    // throws std::runtime_error
-    // constexpr cexpr_string<0> cs2(c, c + 1);
-    
-    constexpr cexpr_basic_string<unsigned char, 0> ucs(uc, uc);
+TEMPLATE_TEST_CASE_SIG("c-string constructor", "",
+        ((typename T, std::size_t M), T, M),
+        (char, 3), (unsigned char, 4), (wchar_t, 9)) {
 
-    constexpr cexpr_basic_string<wchar_t, 3> wcs1(wc + 1, wc + 2);
-    constexpr cexpr_basic_string<wchar_t, 3> wcs2(wc, wc + 3);
+    constexpr T temp[] = {'a', 'b', 'c', '\0'};
+    constexpr cexpr_basic_string<T, M> s(temp);
 }
+
+TEMPLATE_TEST_CASE_SIG("range constructor (empty range)", "",
+        ((typename T, std::size_t M), T, M),
+        (char, 4), (unsigned char, 0), (wchar_t, 0)) {
+
+    constexpr T empty[] = {'\0'};
+    constexpr cexpr_basic_string<T, M> es(empty, empty);
+
+    constexpr T temp[] = {'1', '2', '3', '4', '\0'};
+    constexpr cexpr_basic_string<T, M> ts(temp + 3, temp + 3);
+}
+
+TEMPLATE_TEST_CASE_SIG("range constructor", "",
+        ((typename T, std::size_t M), T, M),
+        (char, 4), (unsigned char, 6), (wchar_t, 10)) {
+
+    constexpr T temp[] = {'1', '2', '3', '4', '\0'};
+    constexpr cexpr_basic_string<T, M> es(temp, temp + 4);
+    constexpr cexpr_basic_string<T, M> s(temp + 1, temp + 3);
+}
+
+// The below test case attempts to throws a runtime_error.
+// But constexpr functions can't throw exceptions. Hence compile error.
+/*
+TEMPLATE_TEST_CASE_SIG("c-string constructor (insufficient capacity)", "",
+        ((typename T, std::size_t M), T, M),
+        (char, 0), (unsigned char, 2), (wchar_t, 2)) {
+
+    constexpr T temp[] = {'a', 'b', 'c', '\0'};
+    constexpr cexpr_basic_string<T, M> css(temp);
+    constexpr cexpr_basic_string<T, M> rs(temp, temp + 3);
+}
+*/
