@@ -32,6 +32,7 @@ public:
     using iterator = pointer;
 
     // A non-mutating iterator type for the elements in the string.
+
     using const_iterator = const_pointer;
 
     // Default construct a string.
@@ -41,8 +42,8 @@ public:
     // Time complexity:
     // Linear in M.
     constexpr cexpr_basic_string()
-            :   m_size_(0),
-                m_str_(0) {}
+            :   m_size_{0},
+                m_str_{0} {}
 
     // Copy construct a string.
     //
@@ -110,21 +111,27 @@ public:
     //
     // Time complexity:
     // Constant.
-    static constexpr size_type max_size();
+    static constexpr size_type max_size() {
+        return M;
+    }
 
     // Returns the maximum number of characters that the string can
     // hold. The value returned is always the template parameter M.
     //
     // Time complexity:
     // Constant.
-    constexpr size_type capacity() const;
+    constexpr size_type capacity() const {
+        return M;
+    }
 
     // Returns the number of characters in the string (excluding the
     // dummy null character).
     //
     // Time complexity:
     // Constant.
-    constexpr size_type size() const;
+    constexpr size_type size() const {
+        return m_size_;
+    }
 
     // Returns a pointer to the first character in the string.
     // The pointer that is returned is guaranteed to point to a
@@ -134,24 +141,36 @@ public:
     //
     // Time complexity:
     // Constant.
-    value_type* data();
-    const value_type* data() const;
+    value_type* data() {
+        return m_str_;
+    }
+    const value_type* data() const {
+        return m_str_;
+    }
 
     // Returns an iterator referring to the first character in the
     // string.
     //
     // Time complexity:
     // Constant.
-    constexpr iterator begin();
-    constexpr const_iterator begin() const;
+    constexpr iterator begin() {
+        return m_str_;
+    }
+    constexpr const_iterator begin() const {
+        return m_str_;
+    }
 
     // Returns an iterator referring to the fictitious
     // one-past-the-end character in the string.
     //
     // Time complexity:
     // Constant.
-    constexpr iterator end();
-    constexpr const_iterator end() const;
+    constexpr iterator end() {
+        return m_str_ + m_size_;
+    }
+    constexpr const_iterator end() const {
+        return m_str_ + m_size_;
+    }
 
     // Returns a reference to the i-th character in the string if i
     // is less than the string size; and returns a reference to the
@@ -160,8 +179,14 @@ public:
     //
     // Time complexity:
     // Constant.
-    constexpr reference operator[](size_type i);
-    constexpr const_reference operator[](size_type i) const;
+    constexpr reference operator[](size_type i) {
+        assert(i >= 0 && i <= m_size_);
+        return m_str_[i];
+    }
+    constexpr const_reference operator[](size_type i) const {
+        assert(i >= 0 && i <= m_size_);
+        return m_str_[i];
+    }
 
     // Appends (i.e., adds to the end) a single character to the
     // string. If the size of the string is equal to the capacity,
