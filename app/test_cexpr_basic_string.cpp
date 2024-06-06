@@ -147,9 +147,13 @@ TEMPLATE_TEST_CASE_SIG("append", "", ((typename T, std::size_t M), T, M),
 void test_to_string() {
     char temp[7]{};
     char* end = nullptr;
-    std::size_t result = to_string(1234, temp, 7, &end);
+    to_string(1234, temp, 7, &end);
     assert(end == temp + 4);
     assert(!std::strcmp(temp, "1234"));
+    to_string(0, temp, 2, nullptr);
+    assert(!std::strcmp(temp, "0"));
+    to_string(30, temp, 3, &end);
+    assert(!std::strcmp(temp, "30"));
 }
 
 TEST_CASE("to_string") {

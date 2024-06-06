@@ -287,7 +287,8 @@ constexpr std::size_t to_string(std::size_t n, char* buffer, std::size_t size, c
     if (len >= size) {
         throw std::runtime_error("insufficient capacity");
     }
-    for (std::size_t i = 0; n; ++i) {
+    if (len == 0) {++len;}
+    for (std::size_t i = 0; i < len; ++i) {
         short digit = n % 10;
         n /= 10;
         buffer[len - i - 1] = '0' + digit;
