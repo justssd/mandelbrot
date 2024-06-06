@@ -1,3 +1,6 @@
+#ifndef _CEXPR_BASIC_STRING_
+#define _CEXPR_BASIC_STRNIG_
+
 #include <stdexcept>
 
 namespace ra::cexpr {
@@ -182,11 +185,15 @@ public:
     // Time complexity:
     // Constant.
     constexpr reference operator[](size_type i) {
-        assert(i >= 0 && i <= m_size_);
+        if (!(i >= 0 && i <= m_size_)) {
+            throw std::runtime_error("out of bound");
+        }
         return m_str_[i];
     }
     constexpr const_reference operator[](size_type i) const {
-        assert(i >= 0 && i <= m_size_);
+        if (!(i >= 0 && i <= m_size_)) {
+            throw std::runtime_error("out of bound");
+        }
         return m_str_[i];
     }
 
@@ -299,3 +306,4 @@ constexpr std::size_t to_string(std::size_t n, char* buffer, std::size_t size, c
 }
 
 }
+#endif // _CEXPR_BASIC_STRING_
