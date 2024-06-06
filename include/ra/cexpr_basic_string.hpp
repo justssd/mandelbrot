@@ -42,8 +42,8 @@ public:
     // Time complexity:
     // Linear in M.
     constexpr cexpr_basic_string()
-            :   m_size_{0},
-                m_str_{0} {}
+            :   m_size_(0),
+                m_str_(0) {}
 
     // Copy construct a string.
     //
@@ -74,6 +74,7 @@ public:
     constexpr cexpr_basic_string(const value_type* s)
             :   m_size_(0),
                 m_str_(0) {
+
         pointer curr(m_str_);
         while (*s != value_type(0)) {
             if (m_size_ == M) {
@@ -95,6 +96,7 @@ public:
     constexpr cexpr_basic_string(const_iterator first, const_iterator last)
             :   m_size_(0),
                 m_str_(0) {
+
         pointer curr(m_str_);
         while(first != last) {
             if (m_size_ == M) {
@@ -195,7 +197,13 @@ public:
     //
     // Time complexity:
     // Constant.
-    constexpr void push_back(const T& x);
+    constexpr void push_back(const T& x) {
+        if (m_size_ == M) {
+            throw std::runtime_error("insufficient capacity to hold the character provided");
+        }
+        m_str_[m_size_++] = x;
+        m_str_[m_size_] = '\0';
+    }
 
     // Erases the last character in the string.
     // If the string is empty, an exception of type std::runtime_error
@@ -203,7 +211,12 @@ public:
     //
     // Time complexity:
     // Constant.
-    constexpr void pop_back();
+    constexpr void pop_back() {
+        if (m_size_ == 0) {
+            throw std::runtime_error("pop from empty string");
+        }
+        m_str_[--m_size_] = '\0';
+    }
 
     // Appends (i.e., adds to the end) to the string the
     // null-terminated string pointed to by s.
@@ -214,7 +227,19 @@ public:
     //
     // Time complexity:
     // Linear in the length of the string s.
-    constexpr cexpr_basic_string& append(const value_type* s);
+    constexpr cexpr_basic_string& append(const value_type* s) {
+        assert(s != nullptr);
+        size_type s_len{0};
+        for(const_pointer curr = s; *curr != '\0'; ++curr, ++s_len);
+        if (s_len + m_size_ > M) {
+            throw std::runtime_error("insufficient capacity to hold the character provided");
+        }
+        for (size_type i = 0; i < s_len; ++i) {
+            m_str_[m_size_++] = s[i];
+        } 
+        m_str_[m_size_] = '\0';
+        return *this;
+    }
 
     // Appends (i.e., adds to the end) to the string another
     // cexpr_basic_string with the same character type (but
@@ -226,14 +251,26 @@ public:
     // Time complexity:
     // Linear in other.size().
     template <size_type OtherM>
-    constexpr cexpr_basic_string& append(const cexpr_basic_string<value_type, OtherM>& other);
+    constexpr cexpr_basic_string& append(const cexpr_basic_string<value_type, OtherM>& other) {
+        if (m_size_ + other.m_size_ > M) {
+            throw std::runtime_error("insufficient capacity to hold the character provided");
+        }
+        for (std::size_t i = 0, other_size = other.size(); i < other_size; ++i) {
+            m_str_[m_size_++] = other[i];
+        } 
+        m_str_[m_size_] = '\0';
+        return *this;
+    }
 
     // Erases all of the characters in the string, yielding an empty
     // string.
     //
     // Time complexity:
     // Constant.
-    constexpr void clear();
+    constexpr void clear() {
+        m_size_ = 0;
+        m_str_[0] = '\0';
+    }
 
 private:
     size_type m_size_;
