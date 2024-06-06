@@ -6,6 +6,7 @@
 
 using ra::cexpr::cexpr_basic_string;
 using ra::cexpr::cexpr_string;
+using ra::cexpr::to_string;
 
 TEMPLATE_TEST_CASE_SIG("default constructor", "", ((typename T, std::size_t M), T, M),
         (char, 3), (unsigned char, 0), (wchar_t, 9)) {
@@ -141,6 +142,18 @@ TEMPLATE_TEST_CASE_SIG("append", "", ((typename T, std::size_t M), T, M),
         (unsigned char, 30), (char, 30), (wchar_t, 16)) {
 
     static_assert((test_append<T, M>(), true));
+}
+
+void test_to_string() {
+    char temp[7]{};
+    char* end = nullptr;
+    std::size_t result = to_string(1234, temp, 7, &end);
+    assert(end == temp + 4);
+    assert(!std::strcmp(temp, "1234"));
+}
+
+TEST_CASE("to_string") {
+    test_to_string();
 }
 
 // The below test case attempts to throws a runtime_error.

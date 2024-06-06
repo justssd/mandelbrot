@@ -280,6 +280,21 @@ private:
 template <std::size_t M>
 using cexpr_string = cexpr_basic_string<char, M>;
 
-constexpr std::size_t to_string(std::size_t n, char* buffer, std::size_t size, char** end);
+constexpr std::size_t to_string(std::size_t n, char* buffer, std::size_t size, char** end) {
+    // https://timsong-cpp.github.io/cppwp/n4861/lex.charset#3
+    std::size_t len = 0;
+    for (std::size_t copy = n; copy; (copy /= 10), ++len);
+    if (len >= size) {
+        throw std::runtime_error("insufficient capacity");
+    }
+    for (std::size_t i = 0; n; ++i) {
+        short digit = n % 10;
+        n /= 10;
+        buffer[len - i - 1] = '0' + digit;
+    }
+    buffer[len] = '\0';
+    if (end) {*end = buffer + len;}
+    return len;
+}
 
 }
