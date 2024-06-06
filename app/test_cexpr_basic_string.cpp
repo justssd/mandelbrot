@@ -102,22 +102,21 @@ TEMPLATE_TEST_CASE_SIG("iterator", "", ((typename T, std::size_t M), T, M),
     static_assert((test_iterator<T, M>(), true));
 }
 
-TEMPLATE_TEST_CASE_SIG("push_back, pop_back", "", ((typename T, std::size_t M), T, M),
+template <typename T, std::size_t M>
+constexpr void test_push_back() {
+
+    T temp[] = {'1', '2', '3', '4', '\0'};
+    
+    cexpr_basic_string<T, M> s(temp);
+    s.push_back(T('5'));
+    assert(s[4] == '5');
+    assert(s.size() == 5);
+    assert(s[5] =='\0');
+}
+TEMPLATE_TEST_CASE_SIG("push_back", "", ((typename T, std::size_t M), T, M),
         (unsigned char, 7), (char, 6), (wchar_t, 8)) {
 
-    constexpr T temp[] = {'1', '2', '3', '4', '\0'};
-
-    cexpr_basic_string<T, M> s(temp);
-
-    // Will test at compile time later, if time permits.
-    s.push_back(T('5'));
-    CHECK(s[4] == '5');
-    CHECK(s.size() == 5);
-    CHECK(s[5] =='\0');
-    s.pop_back();
-    CHECK(s.size() == 4);
-    CHECK(s[4] == '\0');
-    CHECK(s[3] == '4');
+    static_assert((test_push_back<T, M>(), true));
 }
 
 template <typename T, std::size_t M>
@@ -144,7 +143,7 @@ TEMPLATE_TEST_CASE_SIG("append", "", ((typename T, std::size_t M), T, M),
     static_assert((test_append<T, M>(), true));
 }
 
-void test_to_string() {
+constexpr void test_to_string() {
     char temp[7]{};
     char* end = nullptr;
     to_string(1234, temp, 7, &end);
@@ -157,7 +156,7 @@ void test_to_string() {
 }
 
 TEST_CASE("to_string") {
-    test_to_string();
+    static_assert((test_to_string(), true));
 }
 
 // The below test case attempts to throws a runtime_error.

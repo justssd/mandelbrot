@@ -1,5 +1,5 @@
 #ifndef _CEXPR_BASIC_STRING_
-#define _CEXPR_BASIC_STRNIG_
+#define _CEXPR_BASIC_STRING_
 
 #include <stdexcept>
 
@@ -259,7 +259,7 @@ public:
     // Linear in other.size().
     template <size_type OtherM>
     constexpr cexpr_basic_string& append(const cexpr_basic_string<value_type, OtherM>& other) {
-        if (m_size_ + other.m_size_ > M) {
+        if (m_size_ + other.size() > M) {
             throw std::runtime_error("insufficient capacity to hold the character provided");
         }
         for (std::size_t i = 0, other_size = other.size(); i < other_size; ++i) {
