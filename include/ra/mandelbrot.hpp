@@ -7,9 +7,6 @@
 
 namespace ra::fractal {
 
-using ra::cexpr::cexpr_string;
-using ra::cexpr::to_string;
-
 class cexpr_complex {
 public:
     double real;
@@ -73,24 +70,24 @@ constexpr bool in_mandelbrot(const cexpr_complex& z) {
     return true;
 }
 
-constexpr cexpr_string<45> header(std::size_t W, std::size_t H)
+constexpr ra::cexpr::cexpr_string<45> header(std::size_t W, std::size_t H)
 {   
-    cexpr_string<40> header;
+    ra::cexpr::cexpr_string<40> header;
     char dimension[20]{};
     header.append("P1 ");
-    to_string(W, dimension, 20, nullptr);
+    ra::cexpr::to_string(W, dimension, 20, nullptr);
     header.append(dimension);
     header.append(" ");
-    to_string(H, dimension, 20, nullptr);
+    ra::cexpr::to_string(H, dimension, 20, nullptr);
     header.append(dimension);
     header.append("\n");
     return header.begin();
 }
 
 template <std::size_t W, std::size_t H>
-constexpr cexpr_string<(W + 1) * H + 45> populate()
+constexpr ra::cexpr::cexpr_string<(W + 1) * H + 45> populate()
 {
-    cexpr_string<(W + 1) * H + 45> s;
+    ra::cexpr::cexpr_string<(W + 1) * H + 45> s;
     s.append(header(W, H));
 
     for (std::size_t l = 0; l < H; ++l) {
@@ -105,14 +102,14 @@ constexpr cexpr_string<(W + 1) * H + 45> populate()
 
 // A variable template for a string that represents an image depicting
 // the Mandelbrot set. The image has width W and height H.
-// This object must be of type cexpr_string<M> for some appropriate M.
+// This object must be of type ra::cexpr::cexpr_string<M> for some appropriate M.
 // The string is a binary image encoded in the text-based bitmap PNM
 // format.
 // The values of W and H must be such that W >= 2 and H >= 2.
 
 // can hold PNM-encoded character sequence for all std::size_t W and H.
 template <std::size_t W, std::size_t H>
-constexpr auto mandelbrot = cexpr_string<(W + 1) * H + 45>{populate<W, H>()};
+constexpr auto mandelbrot = ra::cexpr::cexpr_string<(W + 1) * H + 45>{populate<W, H>()};
 
 } // namespace ra::fractal
 
