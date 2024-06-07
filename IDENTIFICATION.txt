@@ -1,0 +1,7 @@
+name "Srinivass Srirengadamu Dhulasiraman"
+student_id "V01019546"
+email "srinivass@uvic.ca"
+term "2024-05"
+course "SENG475"
+section "T01"
+assignment "cpp_compile_time"
