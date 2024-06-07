@@ -2,6 +2,7 @@
 #define _CEXPR_MANDELBROT_
 
 #include <iostream>
+#include <cstddef>
 #include <stdexcept>
 #include "ra/cexpr_basic_string.hpp"
 
