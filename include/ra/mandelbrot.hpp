@@ -72,7 +72,7 @@ constexpr bool in_mandelbrot(const cexpr_complex& z) {
 
 constexpr ra::cexpr::cexpr_string<45> header(std::size_t W, std::size_t H)
 {   
-    ra::cexpr::cexpr_string<40> header;
+    ra::cexpr::cexpr_string<45> header;
     char dimension[20]{};
     header.append("P1 ");
     ra::cexpr::to_string(W, dimension, 20, nullptr);
@@ -81,7 +81,7 @@ constexpr ra::cexpr::cexpr_string<45> header(std::size_t W, std::size_t H)
     ra::cexpr::to_string(H, dimension, 20, nullptr);
     header.append(dimension);
     header.append("\n");
-    return header.begin();
+    return header;
 }
 
 template <std::size_t W, std::size_t H>
