@@ -1,5 +1,4 @@
 #include <catch2/catch_all.hpp>
-#include <catch2/catch_template_test_macros.hpp>
 #include "ra/cexpr_basic_string.hpp"
 
 #define ASSERT_THROW(X, Y) if (!X) throw std::logic_error(Y)
@@ -7,6 +6,11 @@
 using ra::cexpr::cexpr_basic_string;
 using ra::cexpr::cexpr_string;
 using ra::cexpr::to_string;
+
+TEST_CASE("test") {
+    constexpr cexpr_basic_string<char, 10> s;
+    CHECK(s.size() == 10);
+}
 
 TEMPLATE_TEST_CASE_SIG("default constructor", "", ((typename T, std::size_t M), T, M),
         (char, 3), (unsigned char, 0), (wchar_t, 9)) {
