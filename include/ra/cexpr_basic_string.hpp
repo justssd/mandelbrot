@@ -1,6 +1,7 @@
 #ifndef _CEXPR_BASIC_STRING_
 #define _CEXPR_BASIC_STRING_
 
+#include <cassert>
 #include <stdexcept>
 
 namespace ra::cexpr {
