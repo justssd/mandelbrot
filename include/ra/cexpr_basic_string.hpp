@@ -187,13 +187,15 @@ public:
     // Time complexity:
     // Constant.
     constexpr reference operator[](size_type i) {
-        if (!(i >= 0 && i <= m_size_)) {
+        // Note: size_type i is never less than 0.
+        if (i < 0 || i > m_size_) {
             throw std::runtime_error("out of bound");
         }
         return m_str_[i];
     }
     constexpr const_reference operator[](size_type i) const {
-        if (!(i >= 0 && i <= m_size_)) {
+        // Note: size_type i is never less than 0.
+        if (i < 0 || i > m_size_) {
             throw std::runtime_error("out of bound");
         }
         return m_str_[i];
@@ -264,7 +266,8 @@ public:
         if (m_size_ + other.size() > M) {
             throw std::runtime_error("insufficient capacity to hold the character provided");
         }
-        for (std::size_t i = 0, other_size = other.size(); i < other_size; ++i) {
+        // Used other_size to iterate instead of '\0' to avoid aliasing.
+        for (size_type i = 0, other_size = other.size(); i < other_size; ++i) {
             m_str_[m_size_++] = other[i];
         } 
         m_str_[m_size_] = '\0';
@@ -290,16 +293,18 @@ template <std::size_t M>
 using cexpr_string = cexpr_basic_string<char, M>;
 
 constexpr std::size_t to_string(std::size_t n, char* buffer, std::size_t size, char** end) {
-    // https://timsong-cpp.github.io/cppwp/n4861/lex.charset#3
     std::size_t len = 0;
     for (std::size_t copy = n; copy; (copy /= 10), ++len);
     if (len >= size) {
         throw std::runtime_error("insufficient capacity");
     }
+    // To account for edge case n = 0
+    // buffer should contain "0\0"
     if (len == 0) {++len;}
     for (std::size_t i = 0; i < len; ++i) {
         short digit = n % 10;
         n /= 10;
+        // https://timsong-cpp.github.io/cppwp/n4861/lex.charset#3
         buffer[len - i - 1] = '0' + digit;
     }
     buffer[len] = '\0';
