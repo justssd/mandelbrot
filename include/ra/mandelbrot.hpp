@@ -71,9 +71,14 @@ constexpr bool in_mandelbrot(const cexpr_complex& z) {
     return true;
 }
 
-constexpr ra::cexpr::cexpr_string<45> header(std::size_t W, std::size_t H)
+// std::size_t <= 2^64 on most 64 bit systems.
+// 2^64 contains 20 digits.
+// header = "P1 W H\n", so 3 + 20 + 1 + 20 + 1 = 45
+constexpr std::size_t max_header_len = 45;
+
+constexpr ra::cexpr::cexpr_string<max_header_len> header(std::size_t W, std::size_t H)
 {   
-    ra::cexpr::cexpr_string<45> header;
+    ra::cexpr::cexpr_string<max_header_len> header;
     char dimension[20]{};
     header.append("P1 ");
     ra::cexpr::to_string(W, dimension, 20, nullptr);
@@ -86,9 +91,9 @@ constexpr ra::cexpr::cexpr_string<45> header(std::size_t W, std::size_t H)
 }
 
 template <std::size_t W, std::size_t H>
-constexpr ra::cexpr::cexpr_string<(W + 1) * H + 45> populate()
+constexpr ra::cexpr::cexpr_string<(W + 1) * H + max_header_len> populate()
 {
-    ra::cexpr::cexpr_string<(W + 1) * H + 45> s;
+    ra::cexpr::cexpr_string<(W + 1) * H + max_header_len> s;
     s.append(header(W, H));
 
     for (std::size_t l = 0; l < H; ++l) {
@@ -110,7 +115,7 @@ constexpr ra::cexpr::cexpr_string<(W + 1) * H + 45> populate()
 
 // can hold PNM-encoded character sequence for all std::size_t W and H.
 template <std::size_t W, std::size_t H>
-constexpr auto mandelbrot = ra::cexpr::cexpr_string<(W + 1) * H + 45>{populate<W, H>()};
+constexpr auto mandelbrot = ra::cexpr::cexpr_string<(W + 1) * H + max_header_len>{populate<W, H>()};
 
 } // namespace ra::fractal
 
