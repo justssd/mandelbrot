@@ -10,7 +10,7 @@ find_package(Catch2 3 REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -gdwarf-4 -fsanitize=address -Wall")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lstdc++ -fsanitize=address -Wall")
 
-if (${CMAKE_CXX_COMPILER} STREQUAL "gcc")
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     set(EXTRA_COMPILE_FLAGS "-fconstexpr-loop-limit=10000 -fconstexpr-ops-limit=1000000000")
 else()
     set(EXTRA_COMPILE_FLAGS "-fconstexpr-steps=100000000")
