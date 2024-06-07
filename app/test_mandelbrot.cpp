@@ -19,7 +19,7 @@ int main() {
     static_assert((test_point_to_complex(), true));
     static_assert((test_in_mandelbrot(), true));
 // Force the image (in PNM format) to be computed at compile time.
-    constexpr auto s = ra::fractal::mandelbrot<128, 128>;
+    constexpr auto s = ra::fractal::mandelbrot<512, 512>;
 // Output the image (in PNM format).
     std::cout << s.begin() << '\n';
 }
